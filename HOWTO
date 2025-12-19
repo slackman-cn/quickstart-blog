@@ -1,0 +1,16 @@
+https://betterstack.com/community/guides/scaling-python/authentication-fastapi/#prerequisites
+https://www.cnblogs.com/XuXiaoCong/p/18628954
+https://github.com/air846/personal-blog-system/blob/main/database/init.sql
+
+---
+pip install sqlmodel
+pip install pymysql
+
+---
+pip install fastapi
+pip install uvicorn  # ASGI服务器
+pip install pydantic # 校验数据
+pip install jinja2
+
+---
+pip install "fastapi" "uvicorn" "python-jose[cryptography]" "passlib[bcrypt]" "python-multipart"
