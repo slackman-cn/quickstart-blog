@@ -1,5 +1,5 @@
 @host = http://127.0.0.1:8000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc2NjIzMjEzN30.-Gtv2NyySFuHzsEaSuk2gMgDX1y9tn-bQMUtbk0N4mw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc2NjI1MTkxNH0.muVo858SDQwV1B8tRVDPWa6kAoq_xL-UW-yt9sjq-SU
 
 POST {{host}}/api/user/query
 
@@ -20,16 +20,17 @@ Authorization: Bearer {{token}}
 
 POST {{host}}/api/blog/query
 
-### 创建文章
+### 创建文章, 更新文章
 
 POST {{host}}/api/blog/create
 Authorization: Bearer {{token}}
 
 {
     "title": "标题",
-    "category_name": "分类",
+    "category_code": "default",
     "summary": "摘要",
-    "content_rich": "正文"
+    "content_rich": "正文",
+    "tags": ["aa", "bb"]
 }
 
 
@@ -51,3 +52,22 @@ GET {{host}}/api/blog/detail/1
 
 DELETE {{host}}/api/blog/detail/1
 
+
+### Page Tag
+
+GET {{host}}/api/blog/tag/1
+
+### Page Tag
+
+POST {{host}}/api/blog/tag/1?q=cc
+
+
+### TAG
+
+
+DELETE {{host}}/api/meta/tag?q=xx&blog_id=22
+
+
+###
+
+GET {{host}}/api/meta/tags?q=

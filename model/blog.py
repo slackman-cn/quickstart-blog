@@ -9,6 +9,7 @@ class BlogPublic(BlogBase):
 
 class BlogCreate(BlogBase):
     content_rich: Optional[str] = None
+    tags: Optional[list[str]] = None
 
 class BlogUpdate(SQLModel):
     title: Optional[str] = None

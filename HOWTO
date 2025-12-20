@@ -2,9 +2,31 @@ https://betterstack.com/community/guides/scaling-python/authentication-fastapi/#
 https://www.cnblogs.com/XuXiaoCong/p/18628954
 https://github.com/air846/personal-blog-system/blob/main/database/init.sql
 
+
+1. 名词解释
+ （1个5分，写2到3行就行）
+2. 选择题，填空题
+  (抽题)
+3. 解答题
+4. 用例图，
+5. 一段简单的程序，复杂度，等价类划分因果图
+  第8章作业
+  找等价类，测试用例
+
 ---
 pip install sqlmodel
 pip install pymysql
+
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str = Field(unique=True) # Single-column unique constraint
+
+class SubAccount(SQLModel, table=True):
+    __table_args__ = (
+        UniqueConstraint("name", "user_id", name="uq_name_user"),
+    )
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
 
 ---
 pip install fastapi

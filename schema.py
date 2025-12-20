@@ -3,11 +3,11 @@ from typing import Annotated
 from datetime import datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, UniqueConstraint, create_engine, select
 
 
 class UserBase(SQLModel):
-    username: str
+    username: str = Field(unique=True)
     nickname: str
     email: Optional[str] = None
     avatar_url: Optional[str] = None
@@ -21,32 +21,43 @@ class User(UserBase, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
-
-class PageMetaBase(SQLModel):
-    type: str = 'category'  # tag | category
-    name: str = '默认分类'
-    slug: Optional[str] = None # 'default'
+## 文章publish之后 ++,  文章记录code属性
+class PageCategoryBase(SQLModel):
+    code: str = Field(unique=True)
+    name: str
     remark: Optional[str] = None # category详情，tag颜色
     blog_count: int = 0
     sort_order: int = 0
 
-class PageMeta(PageMetaBase, table=True):
-    __tablename__ = 'page_meta'
+class PageCategory(PageCategoryBase, table=True):
+    __tablename__ = 'page_category'
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
+## 文章create之后++,  删除文章不删除tag。输入标签input，先检索tag
+class PageTagBase(SQLModel):
+    name: str
+    blog_id: int
+
+class PageTag(PageTagBase, table=True):
+    __tablename__ = 'page_tag'
+    __table_args__ = (
+        UniqueConstraint("name", "blog_id", name="uq_tag_blog"),
+    )
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
 
 class BlogBase(SQLModel):
     title: str
-    category_name: str
+    category_code: str
     summary: Optional[str] = None # 摘要
     num_read: Optional[int] = 0 # 浏览次数
     num_star: Optional[int] = 0 # 收藏次数
     num_reply: Optional[int] = 0 # 评论次数
     num_thumb: Optional[int] = 0 # 点赞次数
     is_top: bool = False # 是否置顶
-    status: Optional[str] = None # 暂存，发布中，已发布 ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') DEFAULT 'DRAFT'
+    status: Optional[str] = Field(default='SAVE_SUBMIT') # 暂存，发布中，已发布 ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') DEFAULT 'DRAFT'
     allow_comment: bool = True
     publish_time: Optional[datetime] = None
 
@@ -55,19 +66,6 @@ class Blog(BlogBase, table=True):
     content_rich: Optional[str] = None
     user_name: Optional[str] = None
     user_id: Optional[int] = None
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
-
-
-class BlogTagBase(SQLModel):
-    blog_title: str
-    blog_id: str
-    tag_name: Optional[str] = None
-
-
-class BlogTag(BlogTagBase, table=True):
-    __tablename__ = 'blog_tag'
-    id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
@@ -117,7 +115,10 @@ def init_user():
                  password_hash='$2b$12$XNBdL2iNdo4YNFB2GH/2wO4IN0VsDXTticOcrd.UgD50tReiIrTiu', user_role='ADMIN')
     user2 = User(username='demo', nickname='演示用户', email='demo@example.com',
                  password_hash='$2b$12$XNBdL2iNdo4YNFB2GH/2wO4IN0VsDXTticOcrd.UgD50tReiIrTiu')
+
+    category1 = PageCategory(code="default", name="默认分组")
     with Session(engine) as session:
         session.add(user1)
         session.add(user2)
+        session.add(category1)
         session.commit()
