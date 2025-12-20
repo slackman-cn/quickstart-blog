@@ -31,6 +31,7 @@ class PageMetaBase(SQLModel):
     sort_order: int = 0
 
 class PageMeta(PageMetaBase, table=True):
+    __tablename__ = 'page_meta'
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -38,15 +39,12 @@ class PageMeta(PageMetaBase, table=True):
 
 class BlogBase(SQLModel):
     title: str
-    user_name: str
-    user_id: str
     category_name: str
     summary: Optional[str] = None # 摘要
-    content_rich: Optional[str] = None
-    num_read: Optional[int] = None # 浏览次数
-    num_star: Optional[int] = None # 收藏次数
-    num_reply: Optional[int] = None # 评论次数
-    num_thumb: Optional[int] = None # 点赞次数
+    num_read: Optional[int] = 0 # 浏览次数
+    num_star: Optional[int] = 0 # 收藏次数
+    num_reply: Optional[int] = 0 # 评论次数
+    num_thumb: Optional[int] = 0 # 点赞次数
     is_top: bool = False # 是否置顶
     status: Optional[str] = None # 暂存，发布中，已发布 ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') DEFAULT 'DRAFT'
     allow_comment: bool = True
@@ -54,6 +52,9 @@ class BlogBase(SQLModel):
 
 class Blog(BlogBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    content_rich: Optional[str] = None
+    user_name: Optional[str] = None
+    user_id: Optional[int] = None
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
@@ -65,6 +66,7 @@ class BlogTagBase(SQLModel):
 
 
 class BlogTag(BlogTagBase, table=True):
+    __tablename__ = 'blog_tag'
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -76,9 +78,9 @@ class BlogLikeBase(SQLModel):
     mode: str = 'star' # 点赞，收藏
     user_name: Optional[str] = None
     user_id: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.now)
 
 class BlogLike(BlogLikeBase, table=True):
+    __tablename__ = 'blog_like'
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -91,6 +93,7 @@ class BlogReplyBase(SQLModel):
     status: Optional[str] = None  # ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'APPROVED' COMMENT '评论状态'
 
 class BlogReply(BlogReplyBase, table=True):
+    __tablename__ = 'blog_reply'
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)

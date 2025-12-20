@@ -1,7 +1,7 @@
 ## DB
 from sqlmodel import SQLModel
 from schema import engine, init_user
-from webapi import user
+from webapi import user, blog
 
 ## FastAPI
 from contextlib import asynccontextmanager
@@ -84,6 +84,7 @@ async def get_robots_txt():
 
 # Web API
 app.include_router(user.router, tags=["Users"], prefix="/api/user")
+app.include_router(blog.router, tags=["Blogs"], prefix="/api/blog")
 
 
 # main.sh
