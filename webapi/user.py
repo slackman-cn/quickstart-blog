@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlmodel import select
-from schema import UserBase, User, SessionDep
+from schema import User, SessionDep
 from model.user import *
-from auth import authenticate_user,get_current_active_user, create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES
+from auth import authenticate_user,get_current_active_user, create_access_token
 
 router = APIRouter()
 
@@ -22,16 +22,14 @@ def query(
 async def login_for_access_token(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(session, form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise HTTPException(401, "Invalid credentials")
+        # raise HTTPException(
+        #     status_code=status.HTTP_401_UNAUTHORIZED,
+        #     detail="Incorrect username or password",
+        #     headers={"WWW-Authenticate": "Bearer"},
+        # )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token({"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
